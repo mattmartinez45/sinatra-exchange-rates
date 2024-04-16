@@ -3,36 +3,43 @@ require "sinatra/reloader"
 require "http"
 require "json"
 
-api_url = "https://api.exchangerate.host/list?access_key=#{ENV["EXCHANGERATE"]}"
+base_url = "https://api.exchangerate.host/"
+access_key = ENV["EXCHANGERATE"]
 
 get("/") do
-  
-  api_url = "https://api.exchangerate.host/list?access_key=#{ENV["EXCHANGERATE"]}"
+  cur_pairs_url = "#{base_url}list?access_key=#{access_key}"
 
-  raw_data = HTTP.get(api_url)
+  cur_resp = HTTP.get(cur_pairs_url)
 
-  raw_data_string = raw_data.to_s
+  @currencies = JSON.parse(cur_resp)["currencies"]
 
-  parsed_data = JSON.parse(raw_data_string)
-
-  @symbols = parsed_data.fetch("currencies")
-  erb(:homepage)
+  erb(:currency_pairs)
  
 end
 
-get("/:from_currency") do
-  @original_currency = params.fetch("from_currency")
+get("/:currency") do
+  @cur_currency = params.fetch("currency")
 
-  api_url = "https://api.exchangerate.host/list?access_key=#{ENV["EXCHANGERATE"]}"
-  
-  # some more code to parse the URL and render a view template
+  cur_quotes_ur = "#{base_url}live?access_key=#{access_key}&source=#{cur_currency}"
+  quotes_resp = HTTP.get(cur_quotes_url)
+
+  @quotes = JSON.parse(quotes_resp)["quotes"]
+
+  erb(:quotes)
+
 end
 
-get("/:from_currency/:to_currency") do
-  @original_currency = params.fetch("from_currency")
-  @destination_currency = params.fetch("to_currency")
+get("/:cur_org/:cur_dest") do
+  @cur_org = params.fetch("cur_org")
 
-  api_url = "https://api.exchangerate.host/convert?access_key=#{ENV["EXCHANGERATE"]}&from=#{@original_currency}&to=#{@destination_currency}&amount=1"
+  @cur_dest = params.fetch("cur_dest")
+
+  convert_url = "#{base_url}convert?access_key=#{access_key}&from=#{cur_org}&to=#{@cur_dest}&amount=1"
+
+  convert_resp= HTTP.get(convert_url)
   
-  # some more code to parse the URL and render a view template
+  @result = JSON.parse(convert_resp)["result"]
+
+  erb(:conversion)
+
 end
