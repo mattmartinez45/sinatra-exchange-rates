@@ -6,7 +6,7 @@
 <% @quotes.each do |key, value| %>
 
 <li>
-<a href=<%="/#{cur_currency}/#{key.gsub(@cur_currency,"")}"%>>Convert 1 <%=@cur_currency%> to <%=key.gsub(@cur_currency, "")%> </a>
+<a href=<%="/#{@cur_currency}/#{key.gsub(@cur_currency,"")}"%>>Convert 1 <%=@cur_currency%> to <%=key.gsub(@cur_currency, "")%> </a>
 </li>
 <%end%>
 </ul>

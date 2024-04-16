@@ -20,7 +20,7 @@ end
 get("/:currency") do
   @cur_currency = params.fetch("currency")
 
-  cur_quotes_ur = "#{base_url}live?access_key=#{access_key}&source=#{cur_currency}"
+  cur_quotes_url = "#{base_url}live?access_key=#{access_key}&source=#{@cur_currency}"
   quotes_resp = HTTP.get(cur_quotes_url)
 
   @quotes = JSON.parse(quotes_resp)["quotes"]
@@ -34,7 +34,7 @@ get("/:cur_org/:cur_dest") do
 
   @cur_dest = params.fetch("cur_dest")
 
-  convert_url = "#{base_url}convert?access_key=#{access_key}&from=#{cur_org}&to=#{@cur_dest}&amount=1"
+  convert_url = "#{base_url}convert?access_key=#{access_key}&from=#{@cur_org}&to=#{@cur_dest}&amount=1"
 
   convert_resp= HTTP.get(convert_url)
   
